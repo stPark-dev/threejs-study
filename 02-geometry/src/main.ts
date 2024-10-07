@@ -1,3 +1,4 @@
+import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import './style.css'
 import * as THREE from "three"
 
@@ -21,6 +22,7 @@ class App {
     this.setupCamera()
     this.setupLight()
     this.setupModels()
+    this.setupControls()
     this.setupEvents()
   }
 
@@ -34,11 +36,15 @@ class App {
   }
 
   private setupLight() {
-    const color = 0xffffff
-    const intensity = 1
-    const light = new THREE.DirectionalLight(color, intensity)
-    light.position.set(-1, 2, 4)
-    this.scene.add(light)
+    const lights = []
+    for (let i = 0; i < 3; i++) {
+      lights[i] = new THREE.DirectionalLight(0xffffff, 3)
+      this.scene.add(lights[i])
+    }
+
+    lights[0].position.set(0, 200, 0)
+    lights[1].position.set(100, 200, 100)
+    lights[2].position.set(-100, -200, -100)
   }
 
   private setupModels() {
@@ -55,7 +61,7 @@ class App {
 
     const geometry = new THREE.BoxGeometry(1, 1, 1)
     const mesh = new THREE.Mesh(geometry, meshMaterial)
-    const line = new THREE.LineSegments(geometry, lineMaterial)
+    const line = new THREE.LineSegments(new THREE.WireframeGeometry(geometry), lineMaterial)
 
     const group = new THREE.Group()
 
@@ -64,6 +70,10 @@ class App {
 
     this.scene.add(group)
 
+  }
+
+  private setupControls() {
+    new OrbitControls(this.camera!, this.domApp! as HTMLElement)
   }
 
   private setupEvents() {
@@ -90,11 +100,11 @@ class App {
     time *= 0.001 // ms -> s
     
     // const cube = this.cube
-    const cube = this.scene.getObjectByName("myModel")
-    if(cube) {
-      cube.rotation.x = time
-      cube.rotation.y = time
-    }
+    // const cube = this.scene.getObjectByName("myModel")
+    // if(cube) {
+    //   cube.rotation.x = time
+    //   cube.rotation.y = time
+    // }
   }
 
   private render(time: number) {
