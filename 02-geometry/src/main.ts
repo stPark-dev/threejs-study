@@ -3,6 +3,53 @@ import './style.css'
 import * as THREE from "three"
 import GUI from 'three/examples/jsm/libs/lil-gui.module.min.js'
 
+interface IGeometryHelper {
+  createGeometry: () => THREE.BufferGeometry
+  createGUI: (update: () => void) => void
+}
+
+class BoxGeometryHelper implements IGeometryHelper {
+  private args = {
+    width: 1,
+    height: 1,
+    depth: 1,
+    widthSegments: 1,
+    heightSegments: 1,
+    depthSegments: 1
+  }
+  createGeometry() {
+    return new THREE.BoxGeometry(this.args.width, this.args.height, this.args.depth, this.args.widthSegments, this.args.heightSegments, this.args.depthSegments)
+  }
+  createGUI(update: () => void) {
+    const gui = new GUI();
+    const widthController = gui.add(this.args, "width", 0.1, 10, 0.01).onChange(update);
+    const heightController = gui.add(this.args, "height", 0.1, 10, 0.01).onChange(update);
+    const depthController = gui.add(this.args, "depth", 0.1, 10, 0.01).onChange(update);
+    const widthSegmentsController = gui.add(this.args, "widthSegments", 1, 10, 1).onChange(update);
+    const heightSegmentsController = gui.add(this.args, "heightSegments", 1, 10, 1).onChange(update);
+    const depthSegmentsController = gui.add(this.args, "depthSegments", 1, 10, 1).onChange(update);
+
+    // 초기화 버튼 추가
+    gui.add({ reset: () => {
+      this.args.width = 1;
+      this.args.height = 1;
+      this.args.depth = 1;
+      this.args.widthSegments = 1;
+      this.args.heightSegments = 1;
+      this.args.depthSegments = 1;
+      update();  // 모델 재생성
+
+      // GUI 컨트롤러 값 업데이트
+      widthController.setValue(1);
+      heightController.setValue(1);
+      depthController.setValue(1);
+      widthSegmentsController.setValue(1);
+      heightSegmentsController.setValue(1);
+      depthSegmentsController.setValue(1);
+    } }, 'reset').name('초기화');
+  }
+}
+
 class App {
   private domApp: Element
   private renderer: THREE.WebGLRenderer
@@ -71,17 +118,10 @@ class App {
       transparent: true, opacity: 0.8
     })
 
-    const args = {
-      width: 1,
-      height: 1,
-      depth: 1,
-      widthSegments: 1,
-      heightSegments: 1,
-      depthSegments: 1
-    }
+    const geometryHelper = new BoxGeometryHelper()
 
     const createModel = () => {
-      const geometry = new THREE.BoxGeometry(args.width, args.height, args.depth, args.widthSegments, args.heightSegments, args.depthSegments)
+    const geometry = geometryHelper.createGeometry()
     const mesh = new THREE.Mesh(geometry, meshMaterial)
     const line = new THREE.LineSegments(new THREE.WireframeGeometry(geometry), lineMaterial)
 
@@ -101,34 +141,7 @@ class App {
     }
 
     createModel()
-
-    const gui = new GUI();
-    const widthController = gui.add(args, "width", 0.1, 10, 0.01).onChange(createModel);
-    const heightController = gui.add(args, "height", 0.1, 10, 0.01).onChange(createModel);
-    const depthController = gui.add(args, "depth", 0.1, 10, 0.01).onChange(createModel);
-    const widthSegmentsController = gui.add(args, "widthSegments", 1, 10, 1).onChange(createModel);
-    const heightSegmentsController = gui.add(args, "heightSegments", 1, 10, 1).onChange(createModel);
-    const depthSegmentsController = gui.add(args, "depthSegments", 1, 10, 1).onChange(createModel);
-  
-    // 초기화 버튼 추가
-    gui.add({ reset: () => {
-      args.width = 1;
-      args.height = 1;
-      args.depth = 1;
-      args.widthSegments = 1;
-      args.heightSegments = 1;
-      args.depthSegments = 1;
-      createModel();  // 모델 재생성
-  
-      // GUI 컨트롤러 값 업데이트
-      widthController.setValue(1);
-      heightController.setValue(1);
-      depthController.setValue(1);
-      widthSegmentsController.setValue(1);
-      heightSegmentsController.setValue(1);
-      depthSegmentsController.setValue(1);
-    } }, 'reset').name('초기화');
-
+    geometryHelper.createGUI(createModel)
   }
 
   private setupControls() {
