@@ -9,6 +9,47 @@ interface IGeometryHelper {
   createGUI: (update: () => void) => void
 }
 
+class ExtrudeGeometryHelper implements IGeometryHelper {
+  private args = {
+    steps: 2,
+    depth: .5,
+    bevelEnabled: true,
+    bevelThickness: 0.2,
+    bevelSize: .1,
+    bevelOffset: 0,
+    cureveSegments: 12,
+    bevelSegments: 1
+  }
+  public createGeometry() {
+    const x = 0, y = 0;
+    const shape = new THREE.Shape()
+    shape.moveTo(x + 5, y + 5)
+    shape.bezierCurveTo(x+5,y+5,x+4,y,x,y)
+    shape.bezierCurveTo(x-6,y,x-6,y+7,x-6,y+7)
+    shape.bezierCurveTo(x-6,y+11,x-3,y+15.4,x+5,y+19)
+    shape.bezierCurveTo(x+12,y+15.4,x+16,y+11,x+16,y+7)
+    shape.bezierCurveTo(x+16,y+7,x+16,y,x+10,y)
+    shape.bezierCurveTo(x+7,y,x+5,y+5,x+5,y+5)
+    
+    const geometry = new THREE.ExtrudeGeometry(shape, this.args)
+    geometry.center()
+    geometry.scale(0.1, -0.1, 1)
+
+    return geometry
+  }
+  public createGUI(update: () => void) {
+    const gui = new GUI()
+    gui.add(this.args, "steps", 1, 10, 1).onChange(update);
+    gui.add(this.args, "depth", 0, 2, 0.01).onChange(update);
+    gui.add(this.args, "bevelEnabled").onChange(update);
+    gui.add(this.args, "bevelThickness", 0, 1, 0.01).onChange(update);
+    gui.add(this.args, "bevelSize", 0, 1, 0.01).onChange(update);
+    gui.add(this.args, "bevelOffset", -4, 5, 0.01).onChange(update);
+    gui.add(this.args, "cureveSegments", 1, 32, 1).onChange(update);
+    gui.add(this.args, "bevelSegments", 1, 32, 1).onChange(update);
+  }
+}
+
 class SphereGeometryHelper implements IGeometryHelper {
   private args = {
     radius: 1,
@@ -275,7 +316,8 @@ class App {
     // const geometryHelper = new ConeGeometryHelper()
     // const geometryHelper = new CylinderGeometryHelper()
     // const geometryHelper = new TorusGeometryHelper()
-    const geometryHelper = new SphereGeometryHelper()
+    // const geometryHelper = new SphereGeometryHelper()
+    const geometryHelper = new ExtrudeGeometryHelper()
 
     const createModel = () => {
     const geometry = geometryHelper.createGeometry()
