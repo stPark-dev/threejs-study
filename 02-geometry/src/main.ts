@@ -1,4 +1,4 @@
-import { OrbitControls } from 'three/examples/jsm/Addons.js'
+import { Font, OrbitControls, TextGeometry, TTFLoader } from 'three/examples/jsm/Addons.js'
 import './style.css'
 import * as THREE from "three"
 import GUI from 'three/examples/jsm/libs/lil-gui.module.min.js'
@@ -7,6 +7,45 @@ import { degToRad } from 'three/src/math/MathUtils.js'
 interface IGeometryHelper {
   createGeometry: () => THREE.BufferGeometry
   createGUI: (update: () => void) => void
+}
+
+class TextGeometryHelper implements IGeometryHelper {
+  private args = {
+    text: "안녕하세요.",
+    size: .5,
+    height: .1,
+    curveSegments: 2,
+    bevelSegments: 3,
+    bevelThickness: 0.1,
+    bevelSize: .01,
+    bevelOffset: 0,
+    bevelEnabled: true
+  }
+  private font: Font
+
+  constructor(font: Font) {
+    this.font = font
+  }
+
+  public createGeometry() {
+    const geometry = new TextGeometry(this.args.text, {
+      font: this.font,
+      ...this.args
+    }) 
+    return geometry
+  }
+  public createGUI(update: () => void) {
+    const gui = new GUI()
+    gui.add(this.args, "text").onChange(update);
+    gui.add(this.args, "size", 0.1, 1, 0.01).onChange(update);
+    gui.add(this.args, "height", 0.1, 1, 0.01).onChange(update);
+    gui.add(this.args, "curveSegments", 1, 32, 1).onChange(update);
+    gui.add(this.args, "bevelSegments", 1, 32, 1).onChange(update);
+    gui.add(this.args, "bevelThickness", 0.01, 1, 0.001).onChange(update);
+    gui.add(this.args, "bevelSize", 0.01, 1, 0.001).onChange(update);
+    gui.add(this.args, "bevelOffset", -1, 1, 0.001).onChange(update);
+    gui.add(this.args, "bevelEnabled").onChange(update);
+  }
 }
 
 class ExtrudeGeometryHelper implements IGeometryHelper {
@@ -259,7 +298,7 @@ class App {
     this.renderer.setPixelRatio(window.devicePixelRatio)
     this.domApp.appendChild(this.renderer.domElement)
     this.scene = new THREE.Scene()
-    this.scene.fog = new THREE.Fog(0x00000000, 1, 3.5)
+    this.scene.fog = new THREE.Fog(0x00000000, 1, 7.5)
 
     this.setupCamera()
     this.setupLight()
@@ -299,7 +338,7 @@ class App {
     this.scene.add(grid);
   }
 
-  private setupModels() {
+  private async setupModels() {
     const meshMaterial = new THREE.MeshPhongMaterial({
       color: 0x156289,
       flatShading: true, side: THREE.DoubleSide,
@@ -317,7 +356,10 @@ class App {
     // const geometryHelper = new CylinderGeometryHelper()
     // const geometryHelper = new TorusGeometryHelper()
     // const geometryHelper = new SphereGeometryHelper()
-    const geometryHelper = new ExtrudeGeometryHelper()
+    // const geometryHelper = new ExtrudeGeometryHelper()
+    const json = await new TTFLoader().loadAsync("./GowunDodum-Regular.ttf")
+    const font = new Font(json)
+    const geometryHelper = new TextGeometryHelper(font)
 
     const createModel = () => {
     const geometry = geometryHelper.createGeometry()
