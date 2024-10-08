@@ -9,6 +9,40 @@ interface IGeometryHelper {
   createGUI: (update: () => void) => void
 }
 
+class LatheGeometryHelper implements IGeometryHelper {
+  private args = {
+    segments: 12,
+    phiStart: 0,
+    phiLength: 360,
+  }
+  public createGeometry() {
+    const points = []
+
+    for(let i = 0; i < 20; i++) {
+      points.push(
+        new THREE.Vector2(
+          Math.sin(i * 0.2) * 7 * (i / 20) + 5,
+          (i - 10) * 2
+        )
+      )
+    }
+    const geometry = new THREE.LatheGeometry(
+      points,
+      this.args.segments,
+      degToRad(this.args.phiStart),
+      degToRad(this.args.phiLength)
+    )
+    geometry.scale(0.04, 0.04, 0.04)
+    return geometry
+  }
+  public createGUI(update: () => void) {
+    const gui = new GUI()
+    gui.add(this.args, "segments", 1, 30).onChange(update);
+    gui.add(this.args, "phiStart", 0, 360).onChange(update);
+    gui.add(this.args, "phiLength", 0, 360).onChange(update);
+  }
+}
+
 class TextGeometryHelper implements IGeometryHelper {
   private args = {
     text: "안녕하세요.",
@@ -32,6 +66,7 @@ class TextGeometryHelper implements IGeometryHelper {
       font: this.font,
       ...this.args
     }) 
+    geometry.center()
     return geometry
   }
   public createGUI(update: () => void) {
@@ -357,9 +392,11 @@ class App {
     // const geometryHelper = new TorusGeometryHelper()
     // const geometryHelper = new SphereGeometryHelper()
     // const geometryHelper = new ExtrudeGeometryHelper()
-    const json = await new TTFLoader().loadAsync("./GowunDodum-Regular.ttf")
-    const font = new Font(json)
-    const geometryHelper = new TextGeometryHelper(font)
+    // const json = await new TTFLoader().loadAsync("./GowunDodum-Regular.ttf")
+    // const font = new Font(json)
+    // const geometryHelper = new TextGeometryHelper(font)
+
+    const geometryHelper = new LatheGeometryHelper()
 
     const createModel = () => {
     const geometry = geometryHelper.createGeometry()
