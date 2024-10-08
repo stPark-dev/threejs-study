@@ -2,12 +2,164 @@ import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import './style.css'
 import * as THREE from "three"
 import GUI from 'three/examples/jsm/libs/lil-gui.module.min.js'
+import { degToRad } from 'three/src/math/MathUtils.js'
 
 interface IGeometryHelper {
   createGeometry: () => THREE.BufferGeometry
   createGUI: (update: () => void) => void
 }
 
+class SphereGeometryHelper implements IGeometryHelper {
+  private args = {
+    radius: 1,
+    widthSegments: 32,
+    heightSegments: 16,
+    phiStart: 0,
+    phiLength: 360,
+    thetaStart: 0,
+    thetaLength: 180
+  }
+  public createGeometry() {
+    return new THREE.SphereGeometry(
+      this.args.radius,
+      this.args.widthSegments,
+      this.args.heightSegments,
+      degToRad(this.args.phiStart),
+      degToRad(this.args.phiLength),
+      degToRad(this.args.thetaStart),
+      degToRad(this.args.thetaLength),
+    )
+  }
+  public createGUI(update: () => void) {
+    const gui = new GUI()
+    gui.add(this.args, "radius", 1, 2, 0.01).onChange(update);
+    gui.add(this.args, "widthSegments", 2, 30, 1).onChange(update);
+    gui.add(this.args, "heightSegments", 3, 200, 1).onChange(update);
+    gui.add(this.args, "phiStart", 2, 30, 1).onChange(update);
+    gui.add(this.args, "phiLength", 3, 200, 1).onChange(update);
+    gui.add(this.args, "thetaStart", 0, 360).onChange(update);
+    gui.add(this.args, "thetaLength", 0, 360).onChange(update);
+  }
+}
+
+class TorusGeometryHelper implements IGeometryHelper {
+  private args = {
+    radius: 1,
+    tube: 0.3,
+    radialSegments: 16,
+    tabularSegments: 100,
+    arc: 360,
+  }
+  public createGeometry() {
+    return new THREE.TorusGeometry(
+      this.args.radius,
+      this.args.tube,
+      this.args.radialSegments,
+      this.args.tabularSegments,
+      degToRad(this.args.arc),
+    )
+  }
+  public createGUI(update: () => void) {
+    const gui = new GUI()
+    gui.add(this.args, "radius", 1, 2, 0.01).onChange(update);
+    gui.add(this.args, "tube", 1, 2, 0.01).onChange(update);
+    gui.add(this.args, "radialSegments", 2, 30, 1).onChange(update);
+    gui.add(this.args, "tabularSegments", 3, 200, 1).onChange(update);
+    gui.add(this.args, "arc", 0.1, 360).onChange(update);
+  }
+}
+class CylinderGeometryHelper implements IGeometryHelper {
+  private args = {
+    radiusTop: .5,
+    radiusBottom: .5,
+    height: 1,
+    radialSegments: 8,
+    heightSegments: 1,
+    openEnded: false,
+    thetaStart: 0,
+    thetaLength: 360,
+  }
+  public createGeometry() {
+    return new THREE.CylinderGeometry(
+      this.args.radiusTop,
+      this.args.radiusBottom,
+      this.args.height,
+      this.args.radialSegments,
+      this.args.heightSegments,
+      this.args.openEnded,
+      THREE.MathUtils.degToRad(this.args.thetaStart),
+      THREE.MathUtils.degToRad(this.args.thetaLength),
+    )
+  }
+  public createGUI(update: () => void) {
+    const gui = new GUI()
+    gui.add(this.args, "radiusTop", 0, 2, 0.01).onChange(update);
+    gui.add(this.args, "radiusBottom", 0, 2, 0.01).onChange(update);
+    gui.add(this.args, "height", 1, 2, 0.01).onChange(update);
+    gui.add(this.args, "radialSegments", 3, 64, 1).onChange(update);
+    gui.add(this.args, "heightSegments", 1, 64, 1).onChange(update);
+    gui.add(this.args, "openEnded").onChange(update);
+    gui.add(this.args, "thetaStart", 0, 360).onChange(update);
+    gui.add(this.args, "thetaLength", 0, 360).onChange(update);
+  }
+}
+
+class ConeGeometryHelper implements IGeometryHelper {
+  private args = {
+    radius: 0.5,
+    height: 1,
+    radialSegments: 8,
+    heightSegments: 1,
+    openEnded: false,
+    thetaStart: 0,
+    thetaLength: 360,
+  }
+  public createGeometry() {
+    return new THREE.ConeGeometry(
+      this.args.radius,
+      this.args.height,
+      this.args.radialSegments,
+      this.args.heightSegments,
+      this.args.openEnded,
+      THREE.MathUtils.degToRad(this.args.thetaStart),
+      THREE.MathUtils.degToRad(this.args.thetaLength),
+    )
+  }
+  public createGUI(update: () => void) {
+    const gui = new GUI()
+    gui.add(this.args, "radius", 0.1, 10, 0.01).onChange(update);
+    gui.add(this.args, "height", 0.1, 2, 0.01).onChange(update);
+    gui.add(this.args, "radialSegments", 1, 64, 1).onChange(update);
+    gui.add(this.args, "heightSegments", 1, 64, 1).onChange(update);
+    gui.add(this.args, "openEnded").onChange(update);
+    gui.add(this.args, "thetaStart", 0, 360, 0.1).onChange(update);
+    gui.add(this.args, "thetaLength", 0, 360, 0.1).onChange(update);
+  }
+}
+
+class CircleGeometryHelper implements IGeometryHelper {
+  private args = {
+    radius: 1,
+    segments: 32,
+    thetaStart: 0,
+    thetaLength: 360,
+  }
+  public createGeometry() {
+    return new THREE.CircleGeometry(
+      this.args.radius,
+      this.args.segments,
+      THREE.MathUtils.degToRad(this.args.thetaStart),
+      THREE.MathUtils.degToRad(this.args.thetaLength),
+    )
+  }
+  public createGUI(update: () => void) {
+    const gui = new GUI()
+    gui.add(this.args, "radius", 0.1, 10, 0.01).onChange(update);
+    gui.add(this.args, "segments", 1, 64, 1).onChange(update);
+    gui.add(this.args, "thetaStart", 0, 360, 0.1).onChange(update);
+    gui.add(this.args, "thetaLength", 0, 360, 0.1).onChange(update);
+  }
+}
 class BoxGeometryHelper implements IGeometryHelper {
   private args = {
     width: 1,
@@ -118,7 +270,12 @@ class App {
       transparent: true, opacity: 0.8
     })
 
-    const geometryHelper = new BoxGeometryHelper()
+    //const geometryHelper = new BoxGeometryHelper()
+    // const geometryHelper = new CircleGeometryHelper()
+    // const geometryHelper = new ConeGeometryHelper()
+    // const geometryHelper = new CylinderGeometryHelper()
+    // const geometryHelper = new TorusGeometryHelper()
+    const geometryHelper = new SphereGeometryHelper()
 
     const createModel = () => {
     const geometry = geometryHelper.createGeometry()
