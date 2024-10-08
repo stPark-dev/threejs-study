@@ -1,4 +1,4 @@
-import { Font, OrbitControls, TextGeometry, TTFLoader } from 'three/examples/jsm/Addons.js'
+import { Font, OrbitControls, ParametricGeometries, ParametricGeometry, TextGeometry, TTFLoader } from 'three/examples/jsm/Addons.js'
 import './style.css'
 import * as THREE from "three"
 import GUI from 'three/examples/jsm/libs/lil-gui.module.min.js'
@@ -7,6 +7,29 @@ import { degToRad } from 'three/src/math/MathUtils.js'
 interface IGeometryHelper {
   createGeometry: () => THREE.BufferGeometry
   createGUI: (update: () => void) => void
+}
+
+class ParametricGeometryHelper implements IGeometryHelper {
+  private args = {
+    slices: 25,
+    stacks: 25,
+  }
+  public createGeometry() {
+    const funcUV = ParametricGeometries.plane(10, 10)
+    const geometry = new ParametricGeometry(
+      funcUV,
+      this.args.slices,
+      this.args.stacks
+    )
+    geometry.center()
+    geometry.scale(0.1, 0.1, 0.1)
+    return geometry
+  }
+  public createGUI(update: () => void) {
+    const gui = new GUI()
+    gui.add(this.args, "slices", 1, 128, 1).onChange(update);
+    gui.add(this.args, "stacks", 1, 128, 1).onChange(update);
+  }
 }
 
 class LatheGeometryHelper implements IGeometryHelper {
@@ -392,11 +415,14 @@ class App {
     // const geometryHelper = new TorusGeometryHelper()
     // const geometryHelper = new SphereGeometryHelper()
     // const geometryHelper = new ExtrudeGeometryHelper()
+
     // const json = await new TTFLoader().loadAsync("./GowunDodum-Regular.ttf")
     // const font = new Font(json)
     // const geometryHelper = new TextGeometryHelper(font)
 
-    const geometryHelper = new LatheGeometryHelper()
+    // const geometryHelper = new LatheGeometryHelper()
+
+    const geometryHelper = new ParametricGeometryHelper()
 
     const createModel = () => {
     const geometry = geometryHelper.createGeometry()
