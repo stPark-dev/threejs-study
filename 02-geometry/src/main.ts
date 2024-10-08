@@ -1,6 +1,7 @@
 import { OrbitControls } from 'three/examples/jsm/Addons.js'
 import './style.css'
 import * as THREE from "three"
+import GUI from 'three/examples/jsm/libs/lil-gui.module.min.js'
 
 class App {
   private domApp: Element
@@ -18,9 +19,11 @@ class App {
     this.renderer.setPixelRatio(window.devicePixelRatio)
     this.domApp.appendChild(this.renderer.domElement)
     this.scene = new THREE.Scene()
+    this.scene.fog = new THREE.Fog(0x00000000, 1, 3.5)
 
     this.setupCamera()
     this.setupLight()
+    this.setupHelpers()
     this.setupModels()
     this.setupControls()
     this.setupEvents()
@@ -47,6 +50,15 @@ class App {
     lights[2].position.set(-100, -200, -100)
   }
 
+  private setupHelpers() {
+    const axes = new THREE.AxesHelper(10);
+    axes.position.y = 0.01; 
+    this.scene.add(axes);
+  
+    const grid = new THREE.GridHelper(5, 20, 0x888888, 0x444444); 
+    this.scene.add(grid);
+  }
+
   private setupModels() {
     const meshMaterial = new THREE.MeshPhongMaterial({
       color: 0x156289,
@@ -59,7 +71,17 @@ class App {
       transparent: true, opacity: 0.8
     })
 
-    const geometry = new THREE.BoxGeometry(1, 1, 1)
+    const args = {
+      width: 1,
+      height: 1,
+      depth: 1,
+      widthSegments: 1,
+      heightSegments: 1,
+      depthSegments: 1
+    }
+
+    const createModel = () => {
+      const geometry = new THREE.BoxGeometry(args.width, args.height, args.depth, args.widthSegments, args.heightSegments, args.depthSegments)
     const mesh = new THREE.Mesh(geometry, meshMaterial)
     const line = new THREE.LineSegments(new THREE.WireframeGeometry(geometry), lineMaterial)
 
@@ -68,7 +90,44 @@ class App {
     group.name = "myModel"
     group.add(mesh, line)
 
+    const oldModel = this.scene.getObjectByName("myModel")
+    if(oldModel){
+      (oldModel.children[0] as THREE.Mesh).geometry.dispose();
+      (oldModel.children[1] as THREE.LineSegments).geometry.dispose();
+      this.scene.remove(oldModel)
+    }
+
     this.scene.add(group)
+    }
+
+    createModel()
+
+    const gui = new GUI();
+    const widthController = gui.add(args, "width", 0.1, 10, 0.01).onChange(createModel);
+    const heightController = gui.add(args, "height", 0.1, 10, 0.01).onChange(createModel);
+    const depthController = gui.add(args, "depth", 0.1, 10, 0.01).onChange(createModel);
+    const widthSegmentsController = gui.add(args, "widthSegments", 1, 10, 1).onChange(createModel);
+    const heightSegmentsController = gui.add(args, "heightSegments", 1, 10, 1).onChange(createModel);
+    const depthSegmentsController = gui.add(args, "depthSegments", 1, 10, 1).onChange(createModel);
+  
+    // 초기화 버튼 추가
+    gui.add({ reset: () => {
+      args.width = 1;
+      args.height = 1;
+      args.depth = 1;
+      args.widthSegments = 1;
+      args.heightSegments = 1;
+      args.depthSegments = 1;
+      createModel();  // 모델 재생성
+  
+      // GUI 컨트롤러 값 업데이트
+      widthController.setValue(1);
+      heightController.setValue(1);
+      depthController.setValue(1);
+      widthSegmentsController.setValue(1);
+      heightSegmentsController.setValue(1);
+      depthSegmentsController.setValue(1);
+    } }, 'reset').name('초기화');
 
   }
 
