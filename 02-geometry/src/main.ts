@@ -17,7 +17,7 @@ class ExtrudeGeometryHelper implements IGeometryHelper {
     bevelThickness: 0.2,
     bevelSize: .1,
     bevelOffset: 0,
-    cureveSegments: 12,
+    curveSegments: 12,
     bevelSegments: 1
   }
   public createGeometry() {
@@ -45,7 +45,7 @@ class ExtrudeGeometryHelper implements IGeometryHelper {
     gui.add(this.args, "bevelThickness", 0, 1, 0.01).onChange(update);
     gui.add(this.args, "bevelSize", 0, 1, 0.01).onChange(update);
     gui.add(this.args, "bevelOffset", -4, 5, 0.01).onChange(update);
-    gui.add(this.args, "cureveSegments", 1, 32, 1).onChange(update);
+    gui.add(this.args, "curveSegments", 1, 32, 1).onChange(update);
     gui.add(this.args, "bevelSegments", 1, 32, 1).onChange(update);
   }
 }
