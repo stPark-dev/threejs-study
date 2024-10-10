@@ -29,6 +29,7 @@ class App {
     const height = domApp.clientHeight 
 
     this.camera = new THREE.PerspectiveCamera(78, width / height, 0.1, 100)
+    this.camera.position.z = 20
 
     new OrbitControls(this.camera, this.domApp as HTMLElement)
 }
@@ -37,14 +38,29 @@ class App {
     const intensity = 1
     const light = new THREE.DirectionalLight(color, intensity)
     light.position.set(-1, 2, 4)
-
     this.scene.add(light)
   }
   private setupModels(){
-    const geomBox = new THREE.BoxGeometry(1)
-    const material = new THREE.MeshStandardMaterial()
-    const box = new THREE.Mesh(geomBox, material)
-    this.scene.add(box)
+    // const geomBox = new THREE.BoxGeometry(1)
+    // const material = new THREE.MeshStandardMaterial()
+    // const box = new THREE.Mesh(geomBox, material)
+
+    // const matrixS = new THREE.Matrix4().makeScale(0.5, 0.5, 0.5)
+    // const matrixR = new THREE.Matrix4().makeRotationX(THREE.MathUtils.degToRad(45))
+    // const matrixT = new THREE.Matrix4().makeTranslation(0, 2, 0)
+
+    // box.position.set(0, 0, 0)
+    // box.rotation.x = THREE.MathUtils.degToRad(45)
+    // box.scale.set(0.5, 0.5, 0.5)
+
+    // box.applyMatrix4(matrixS)
+    // box.applyMatrix4(matrixR)
+    // box.applyMatrix4(matrixT)
+
+    // this.scene.add(box)
+    // const axesOfScene = new THREE.AxesHelper(5)
+    // this.scene.add(axesOfScene)
+
   }
 
   
