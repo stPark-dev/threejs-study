@@ -61,6 +61,22 @@ class App {
     // const axesOfScene = new THREE.AxesHelper(5)
     // this.scene.add(axesOfScene)
 
+    const material = new THREE.MeshStandardMaterial()
+
+    const geomParent = new THREE.BoxGeometry(2,2,2)
+    const parent = new THREE.Mesh(geomParent, material)
+
+    const geomChild = new THREE.BoxGeometry(1,1,1)
+    const child = new THREE.Mesh(geomChild, material)
+
+    child.position.x = 3
+
+    parent.add(child)
+
+    this.scene.add(parent)
+
+    const axesOfScene = new THREE.AxesHelper(10)
+    this.scene.add(axesOfScene)
   }
 
   
