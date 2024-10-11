@@ -41,26 +41,30 @@ class App {
     this.scene.add(light)
   }
   private setupModels(){
-    // const geomBox = new THREE.BoxGeometry(1)
-    // const material = new THREE.MeshStandardMaterial()
-    // const box = new THREE.Mesh(geomBox, material)
+    /* 
+    const geomBox = new THREE.BoxGeometry(1)
+    const material = new THREE.MeshStandardMaterial()
+    const box = new THREE.Mesh(geomBox, material)
 
-    // const matrixS = new THREE.Matrix4().makeScale(0.5, 0.5, 0.5)
-    // const matrixR = new THREE.Matrix4().makeRotationX(THREE.MathUtils.degToRad(45))
-    // const matrixT = new THREE.Matrix4().makeTranslation(0, 2, 0)
+    const matrixS = new THREE.Matrix4().makeScale(0.5, 0.5, 0.5)
+    const matrixR = new THREE.Matrix4().makeRotationX(THREE.MathUtils.degToRad(45))
+    const matrixT = new THREE.Matrix4().makeTranslation(0, 2, 0)
 
-    // box.position.set(0, 0, 0)
-    // box.rotation.x = THREE.MathUtils.degToRad(45)
-    // box.scale.set(0.5, 0.5, 0.5)
+    box.position.set(0, 0, 0)
+    box.rotation.x = THREE.MathUtils.degToRad(45)
+    box.scale.set(0.5, 0.5, 0.5)
 
-    // box.applyMatrix4(matrixS)
-    // box.applyMatrix4(matrixR)
-    // box.applyMatrix4(matrixT)
+    box.applyMatrix4(matrixS)
+    box.applyMatrix4(matrixR)
+    box.applyMatrix4(matrixT)
 
-    // this.scene.add(box)
-    // const axesOfScene = new THREE.AxesHelper(5)
-    // this.scene.add(axesOfScene)
+    this.scene.add(box)
+    const axesOfScene = new THREE.AxesHelper(5)
+    this.scene.add(axesOfScene)
+    SRT
+    */
 
+    /* 
     const material = new THREE.MeshStandardMaterial()
 
     const geomParent = new THREE.BoxGeometry(2,2,2)
@@ -77,9 +81,19 @@ class App {
 
     const axesOfScene = new THREE.AxesHelper(10)
     this.scene.add(axesOfScene)
+
+    parent and child
+    */
+    const axisHelper = new THREE.AxesHelper(10)
+    this.scene.add(axisHelper)
+
+    const geomGround = new THREE.PlaneGeometry(5, 5)
+    const matGround = new THREE.MeshStandardMaterial()
+    const ground = new THREE.Mesh(geomGround, matGround)
+    this.scene.add(ground)
+    
   }
 
-  
   private setupEvents() {
     window.onresize = this.resize.bind(this)
     this.resize()

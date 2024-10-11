@@ -122,10 +122,6 @@ class App {
   private update(time: number) {
     time *= 0.001;
     this.controls?.update();
-
-    if (this.model) {
-      this.model.rotation.y += 0.01;  // 자동 회전
-    }
   }
 
   private handleKeyDown(event: KeyboardEvent) {
